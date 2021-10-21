@@ -24,7 +24,3 @@ class Client:
     def send(self, address, message):
         communication = self.communication[address]
         communication.send(message.encode('utf-8'))
-
-
-server = Client('192.168.25.1', 9999)
-server.connect()
