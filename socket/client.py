@@ -26,6 +26,3 @@ class Client:
     def send(self, message):
         self.socket.send(message.encode('utf-8'))
 
-cl = Client('192.168.25.1', 9999)
-cl.connect()
-cl.send("ngentot")
