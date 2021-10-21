@@ -32,7 +32,6 @@ def command(*arg):
 # Function for Socket
 def receive(address):
     while True:
-        time.sleep(0.01)
         try:
             message = server.receive(address)
             print(message)
@@ -107,7 +106,7 @@ def app():
     # Connect Server
     
     # address
-    address = '192.168.25.2'
+    address = '192.168.25.1'
 
     # Up Threading
     recv = up_thread(receive, address)

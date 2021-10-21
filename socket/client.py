@@ -12,8 +12,6 @@ class Client:
         self.port = port
         self.bind = bind
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        self.communication = {}
        
     def connect(self):
         self.socket.connect((self.host, self.port))
@@ -25,6 +23,9 @@ class Client:
         return message
 
 
-    def send(self, address, message):
-        communication = self.communication[address]
-        communication.send(message.encode('utf-8'))
+    def send(self, message):
+        self.socket.send(message.encode('utf-8'))
+
+cl = Client('192.168.25.1', 9999)
+cl.connect()
+cl.send("ngentot")

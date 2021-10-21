@@ -32,6 +32,8 @@ class Server:
     def receive(self, address):
         communication = self.communication[address]
         message = communication.recv(1024).decode('utf-8')
+        if len(message) == 0:
+            raise Exception("Message empty")
         return message
 
     def send(self, address, message):
