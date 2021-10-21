@@ -1,6 +1,10 @@
 import socket
 import time
 
+# import sys
+# sys.path.append("..")
+# from database import db
+
 class Client:
 
     def __init__(self, host = '127.0.0.1', port = 8000, bind = 5):
@@ -16,7 +20,7 @@ class Client:
     
     def receive(self, address):
         communication = self.communication[address]
-        message = communication.recv(1024).decoder('utf-8')
+        message = communication.recv(2048).decoder('utf-8')
         message = message.split(' ')
         return message
 
