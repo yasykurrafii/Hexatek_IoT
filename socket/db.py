@@ -18,5 +18,5 @@ class Database:
             print("Command Salah")
 
 # x = Database(password = "myr170500")
-# x.execute("insert into hexatek.dht (suhu, humidity) values (19.0, 60.0)")
+# x.execute("insert into hexatek.rly (gpio, kondisi) values (14, 1)")
 

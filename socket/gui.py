@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
-import socket
 import threading
 import time
 from server import Server
+
+# Connect database
+import db
 
 # Global variable for Socket
 HOST = '192.168.25.1'
@@ -23,11 +25,16 @@ y_origin = 20
 x_space = 50
 y_space = 30
 
+# Initialize Database
+db = db.Database(password='myr170500')
+
 # Checking command
-def command(*arg):
-    com = {'chmod' : change_mode}
-    for i in arg:
-        com[i[0]](int(i[1]), int(i[2]))
+def command(msg):
+    com = {'dht' : "(suhu, humidity)",
+            'rly' : '(gpio, kondisi)'}
+    message = msg.split(" ")
+    execute = f"INSERT INTO hexatek.{message[0]} {com[message[0]]} values ({message[1]}, {message[2]})"
+    db.execute(execute)
 
 # Function for Socket
 def receive(address):
@@ -35,6 +42,7 @@ def receive(address):
         try:
             message = server.receive(address)
             print(message)
+            up_thread(command, message)
         except :
             print(f'{address} not connected')
             time.sleep(5.0)
@@ -106,7 +114,7 @@ def app():
     # Connect Server
     
     # address
-    address = '192.168.25.1'
+    address = '192.168.25.2'
 
     # Up Threading
     recv = up_thread(receive, address)

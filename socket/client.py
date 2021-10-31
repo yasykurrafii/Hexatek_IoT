@@ -25,4 +25,3 @@ class Client:
 
     def send(self, message):
         self.socket.send(message.encode('utf-8'))
-

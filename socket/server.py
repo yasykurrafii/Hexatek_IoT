@@ -20,7 +20,6 @@ class Server:
        
     def connect(self):
          while True:
-            time.sleep(0.5)
             try:
                 communication, address = self.socket.accept()
                 self.connection.append(address[0])
