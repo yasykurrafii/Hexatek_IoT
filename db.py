@@ -9,12 +9,12 @@ main.geometry("500x500")
 mydb = mysql.connect(
     host = "localhost",
     user = "root",
-    passwd = "",
-    db = "hexa"
+    passwd = "myr170500",
+    db = "hexatek"
 )
 
 c = mydb.cursor()
-c.execute("""SELECT * FROM suhu""")
+c.execute("""SELECT * FROM dht""")
 myresult = c.fetchall()
 counter = 0
 
