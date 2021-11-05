@@ -27,52 +27,75 @@ frame6.grid(row=1, column=2, pady=2, padx=2)
 #########       FRAME1          ##########  
 jframe1 = tk.Label(frame1, text="FRAME 1")
 jframe1.grid(row=0, column=0, columnspan=4, pady=5)
+
 tombol1 = tk.Button(frame1, text="Tombol",height=2, width=10)
 tombol1.grid(row=1, column=0, padx=2, pady=5)
+
 tombol2 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol2.grid(row=1, column=1, padx=2)
+
 tombol3 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol3.grid(row=1, column=2, padx=2)
+
 tombol8 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol8.grid(row=1, column=3, padx=2)
+
 tombol4 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol4.grid(row=2, column=0, padx=2)
+
 tombol5 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol5.grid(row=2, column=1, padx=2)
+
 tombol6 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol6.grid(row=2, column=2, padx=2)
+
 tombol7 = tk.Button(frame1,text="Tombol",height=2, width=10)
 tombol7.grid(row=2, column=3, padx=2)
+
 kosong = tk.Label(frame1, bg="grey")
 kosong.grid(row=3, column=0, columnspan=4, pady=20, sticky="ew")
+
 jsuhu = tk.Label(frame1, text="SUHU")
 jsuhu.grid(row=4, column=0, columnspan=2)
+
 suhu = tk.Label(frame1, text="27 C")
 suhu.grid(row=5, column=0, columnspan=2, pady=15)
+
 jhum = tk.Label(frame1, text="HUMIDITY")
 jhum.grid(row=4, column=2, columnspan=2)
+
 humid = tk.Label(frame1, text="70%")
 humid.grid(row=5, column=2, columnspan=2, pady=15)
 
 #########       FRAME 2         ##########  
 jframe2 = tk.Label(frame2, text="FRAME 2")
 jframe2.grid(row=0, column=0, columnspan=4, pady=5)
+
 tombol1 = tk.Button(frame2, text="Tombol",height=2, width=10)
 tombol1.grid(row=1, column=0, padx=2, pady=5)
+
 tombol2 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol2.grid(row=1, column=1, padx=2)
+
 tombol3 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol3.grid(row=1, column=2, padx=2)
+
 tombol8 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol8.grid(row=1, column=3, padx=2)
+
 tombol4 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol4.grid(row=2, column=0, padx=2)
+
 tombol5 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol5.grid(row=2, column=1, padx=2)
+
 tombol6 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol6.grid(row=2, column=2, padx=2)
+
 tombol7 = tk.Button(frame2,text="Tombol",height=2, width=10)
 tombol7.grid(row=2, column=3, padx=2)
+
+
 ########        Sensor          #########
 lampu1 = tk.Label(frame2, image= on)
 lampu1.grid(row=3, column=0, pady=10, padx=2)
@@ -82,6 +105,7 @@ lampu3 = tk.Label(frame2, image= on)
 lampu3.grid(row=3, column=2, pady=10, padx=2)
 lampu4 = tk.Label(frame2, image= off)
 lampu4.grid(row=3, column=3, pady=10, padx=2)
+
 ########        Space           #########
 kosong = tk.Label(frame2, bg="grey")
 kosong.grid(row=4, column=0, columnspan=4, pady=10, sticky="ew")
