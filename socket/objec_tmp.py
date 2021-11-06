@@ -4,6 +4,13 @@ from PIL import Image, ImageTk
 from db import Database
 # from gui import up_thread
 
+class ButtonToggle(tk.Tk):
+    def __init__(self, container, row, column, text = "Button", height="2", width="10"):
+        self.button = tk.Button(container, text = text, height=height, width=width, command = self.__command)
+        self.button.grid(row = row, column=column, padx=2)
+    
+    def __command(self):
+        self.button.configure(bg = "green")
 
 class Widget(tk.Tk, Database):
     def __init__(self, container):
@@ -18,13 +25,14 @@ class Widget(tk.Tk, Database):
         self.on = ImageTk.PhotoImage(self.img2)
         self.off = ImageTk.PhotoImage(self.img1)
 
-
-    def __build_button(self, row, column, command = '', height="2", width="10"):
-        tk.Button(self.container,text="Tombol",height=height, width=width).grid(row=row, column=column, padx=2)
-
     def __build_label(self, text, row, column, columnspan, pady=0):
         tk.Label(self.container, text=text).grid(row=row, column=column, columnspan=columnspan, pady=pady)
 
+    def __button_on(self):
+        print("Button on")
+
+
+    # Building Frame
     def build_frame(self):
         
         font1 = tk.font.Font(family="Montserrat",size=20)
@@ -46,7 +54,7 @@ class Widget(tk.Tk, Database):
 
         # Button
         for i in self.column_row:
-            self.__build_button(i[0],i[1])
+            ButtonToggle(self.container, i[0],i[1])
 
         tk.Label(self.container, image= self.on).grid(row=3, column=0, pady=10, padx=2)
         tk.Label(self.container, image= self.off).grid(row=3, column=1, pady=10, padx=2)
