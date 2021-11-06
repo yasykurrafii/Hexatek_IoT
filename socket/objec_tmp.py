@@ -28,10 +28,6 @@ class Widget(tk.Tk, Database):
     def __build_label(self, text, row, column, columnspan, pady=0):
         tk.Label(self.container, text=text).grid(row=row, column=column, columnspan=columnspan, pady=pady)
 
-    def __button_on(self):
-        print("Button on")
-
-
     # Building Frame
     def build_frame(self):
         
