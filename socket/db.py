@@ -17,9 +17,17 @@ class Database:
         except :
             print("Command Salah")
 
-    def take_data(self, command):
-        self.cursor.execute(command)
-        return self.cursor.fetchone()
+    def take_data(self, table, data = 'all'):
+        self.cursor.execute(f"SELECT * FROM {table}")
+        try :
+            if data == 'all':
+                return self.cursor.fetchall()
+            elif data == 'new':
+                return self.cursor.fetchone()
+            self.cursor.close()
+        except:
+            raise "Choose data between New and All"
+        
 
 # x = Database(password = "myr170500")
 # x.execute("insert into hexatek.rly (gpio, kondisi) values (14, 1)")
