@@ -20,7 +20,7 @@ def command(msg):
             'rly' : '(gpio, kondisi)'}
     message = msg.split(" ")
     execute = f"INSERT INTO hexatek.{message[0]} {com[message[0]]} values ({message[1]}, {message[2]})"
-    db.execute(execute)
+    db.insert(execute)
 
 # Function for Socket
 def receive(address):
@@ -53,9 +53,9 @@ def app():
     # Connect Server
     
     # address
-    address = '192.168.25.2'
+    address = server.connection
 
     # Up Threading
-    up_thread(receive, address)
-app()
+    for i in address:
+        up_thread(receive, i)
 

@@ -29,6 +29,6 @@ class Database:
             raise "Choose data between New and All"
         
 
-# x = Database(password = "myr170500")
-# x.execute("insert into hexatek.rly (gpio, kondisi) values (14, 1)")
+x = Database(password = "myr170500")
+x.take_data('dht')
 
