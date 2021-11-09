@@ -17,8 +17,11 @@ class Database:
         except :
             print("Command Salah")
 
-    def take_data(self, table, data = 'all'):
-        self.cursor.execute(f"SELECT * FROM {table}")
+    def take_data(self, table, data = 'all', ip = None):
+        if ip != None:
+            self.cursor.execute(f"Select * From {table} Where ip = {ip}")
+        else:
+            self.cursor.execute(f"SELECT * FROM {table}")
         try :
             if data == 'all':
                 return self.cursor.fetchall()
@@ -27,8 +30,7 @@ class Database:
             self.cursor.close()
         except:
             raise "Choose data between New and All"
-        
 
-x = Database(password = "myr170500")
-x.take_data('dht')
+# x = Database(password = "myr170500")
+# x.take_data('dht')
 
