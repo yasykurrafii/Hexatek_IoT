@@ -1,5 +1,5 @@
 import socket
-import time
+from rasp_con import up_thread, receive
 
 class Server:
 
@@ -24,6 +24,7 @@ class Server:
                 communication, address = self.socket.accept()
                 self.connection.append(address[0])
                 print(f'Connected {address[0]}')
+                up_thread(receive, address[0])
                 self.communication[address[0]] = communication
             except :
                 pass

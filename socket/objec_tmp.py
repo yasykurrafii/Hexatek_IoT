@@ -1,10 +1,8 @@
 import tkinter as tk
 from tkinter import Toplevel, ttk
-import tkinter.font
 from PIL import Image, ImageTk
 from db import Database
-from gui import app
-# from gui import up_thread
+from rasp_con import get_connection
 
 class ButtonToggle(tk.Tk):
     def __init__(self, container, row, column, **kwargs):
@@ -148,6 +146,7 @@ class App(tk.Tk):
         self.attributes('-fullscreen', True)
         self.resizable(False, False)
         self.title("Page 1")
+        self.connection = get_connection()
 
         self.__create_widget()
 
@@ -165,5 +164,4 @@ class App(tk.Tk):
         tree1 = Tampilan(self, 0,3, treeview=True, columnspan=True, span=(2,2), width="500", height="500")
 
 apl = App()
-# app()
 apl.mainloop()

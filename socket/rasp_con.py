@@ -47,15 +47,13 @@ def up_thread(func, *args):
     thread.start()
     return thread    
 
+# Function to get connection
+def get_connection():
+    return server.connection
+
 # Main Function
 def app():
     up_thread(server.up_server)
-    # Connect Server
     
-    # address
-    address = server.connection
 
-    # Up Threading
-    for i in address:
-        up_thread(receive, i)
-
+app()
