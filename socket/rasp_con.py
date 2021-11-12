@@ -7,7 +7,7 @@ import db
 
 # Global variable for Socket
 HOST = '192.168.25.1'
-PORT = 9999
+PORT = 8888
 
 server = Server(HOST, PORT)
 
@@ -23,7 +23,7 @@ def command(msg):
     db.insert(execute)
 
 # Function for Socket
-def receive(address):
+def receiving(address):
     while True:
         try:
             message = server.receive(address)
@@ -39,6 +39,7 @@ def send(address, message):
         time.sleep(0.5)
         server.send(address, message)
     except KeyError:
+        print(f"{message}")
         print(f"{address} not connected")
 
 # Function for Thread
@@ -51,9 +52,15 @@ def up_thread(func, *args):
 def get_connection():
     return server.connection
 
+def up_receive():
+    while True:
+        print(get_connection())
+        time.sleep(5)
+
 # Main Function
 def app():
     up_thread(server.up_server)
+    up_thread(up_receive)
     
 
 app()

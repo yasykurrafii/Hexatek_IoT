@@ -25,3 +25,6 @@ class Client:
 
     def send(self, message):
         self.socket.send(message.encode('utf-8'))
+
+x = Client("192.168.25.1", 9999)
+x.connect()

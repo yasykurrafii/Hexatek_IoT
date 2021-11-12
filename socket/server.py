@@ -1,6 +1,4 @@
 import socket
-from rasp_con import up_thread, receive
-
 class Server:
 
     def __init__(self, host = '127.0.0.1', port = 8000, bind = 5):
@@ -22,9 +20,9 @@ class Server:
          while True:
             try:
                 communication, address = self.socket.accept()
-                self.connection.append(address[0])
+                if address[0] not in self.connection:
+                    self.connection.append(address[0])
                 print(f'Connected {address[0]}')
-                up_thread(receive, address[0])
                 self.communication[address[0]] = communication
             except :
                 pass

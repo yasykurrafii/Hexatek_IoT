@@ -1,16 +1,19 @@
 import tkinter as tk
 from tkinter import Toplevel, ttk
 from PIL import Image, ImageTk
+import tkinter.font
 from db import Database
-from rasp_con import get_connection
+from rasp_con import get_connection, send
 
 class ButtonToggle(tk.Tk):
-    def __init__(self, container, row, column, **kwargs):
+    def __init__(self, container, row, column, ip, **kwargs):
         self.button = tk.Button(container, command = self.__command_on, **kwargs)
         self.button.grid(row = row, column=column, padx=2)
         self.orig_color = self.button.cget("bg")
+        self.ip = ip
     
     def __command_on(self):
+        send(self.ip, "testing")
         self.button.configure(bg = "green", command = self.__command_off)
 
     def __command_off(self):
@@ -26,7 +29,7 @@ class ButtonToggle(tk.Tk):
 
 
 class Widget(tk.Tk, Database):
-    def __init__(self, container):
+    def __init__(self, container, ip):
         self.container = container
         Database.__init__(self, password = 'myr170500')
         self.dht = super().take_data(table = 'dht', data = 'all')
@@ -34,6 +37,7 @@ class Widget(tk.Tk, Database):
         self.tree = ttk.Treeview(self.container, selectmode="browse")
         self.suhu = self.dht_new[1]
         self.humid = self.dht_new[2]
+        self.ip = ip
 
         self.img1 = (Image.open('img\lampu.png')).resize((50, 50), Image.ANTIALIAS)
         self.img2 = (Image.open('img\lampuon.png')).resize((50,50), Image.ANTIALIAS)
@@ -77,7 +81,7 @@ class Widget(tk.Tk, Database):
 
         # Button
         for i in self.column_row:
-            ButtonToggle(self.container, i[0],i[1],text = "Button", height="2", width="10")
+            ButtonToggle(self.container, i[0],i[1], self.ip, text = "Button", height="2", width="10")
 
         tk.Label(self.container, image= self.on).grid(row=3, column=0, pady=10, padx=2)
         tk.Label(self.container, image= self.off).grid(row=3, column=1, pady=10, padx=2)
@@ -116,7 +120,7 @@ class Widget(tk.Tk, Database):
 class Tampilan(tk.Frame, Widget):
 
     # Belom ditambahin IP
-    def __init__(self, container, row, column, treeview = False, columnspan = False, span = (0,0), **kwargs):
+    def __init__(self, container, row, column, ip = "127.0.0.1", treeview = False, columnspan = False, span = (0,0), **kwargs):
         self.kwarg = kwargs
         try:
             self.pady = kwargs['pady']
@@ -125,7 +129,7 @@ class Tampilan(tk.Frame, Widget):
             pass
         super().__init__(container, highlightthickness=2, **self.kwarg)
         # Tambahin IP untuk Widgetnya
-        Widget.__init__(self, self)
+        Widget.__init__(self, self, ip)
         if treeview:
             super().build_tree(self.tree)
         else:
@@ -155,13 +159,13 @@ class App(tk.Tk):
     def __create_widget(self):
         # Ter ini udah ada grid nya jadi gausah lu pakein .grid lagi ya
         # Belom ditambahin IP, Lagi mikir gimana caranya
-        frame  = Tampilan(self,0,0,highlightbackground = 'black', width = '300', height = '300', pady = 30)
-        frame2 = Tampilan(self,0,1,highlightbackground = 'black', width = '300', height = '300', pady = 30)
-        frame3 = Tampilan(self, 0, 2,highlightbackground = 'black', width = '300', height = '300', pady = 30)
-        frame4 = Tampilan(self, 1, 0,highlightbackground = 'black', width = '300', height = '300')
-        frame5 = Tampilan(self, 1, 1,highlightbackground = 'black', width = '300', height = '300')
-        frame6 = Tampilan(self, 1, 2,highlightbackground = 'black', width = '300', height = '300')
-        tree1 = Tampilan(self, 0,3, treeview=True, columnspan=True, span=(2,2), width="500", height="500")
+        frame  = Tampilan(self, 0,0, "192.168.1.0", highlightbackground = 'black', width = '300', height = '300', pady = 30)
+        frame2 = Tampilan(self,0,1, "192.168.1.1", highlightbackground = 'black', width = '300', height = '300', pady = 30)
+        frame3 = Tampilan(self, 0, 2, "192.168.1.2", highlightbackground = 'black', width = '300', height = '300', pady = 30)
+        frame4 = Tampilan(self, 1, 0, "192.168.1.3", highlightbackground = 'black', width = '300', height = '300')
+        frame5 = Tampilan(self, 1, 1, "192.168.1.4", highlightbackground = 'black', width = '300', height = '300')
+        frame6 = Tampilan(self, 1, 2, "192.168.1.5", highlightbackground = 'black', width = '300', height = '300')
+        tree1 = Tampilan(self, 0,3, "192.168.1.6", treeview=True, columnspan=True, span=(2,2), width="500", height="500")
 
 apl = App()
 apl.mainloop()
