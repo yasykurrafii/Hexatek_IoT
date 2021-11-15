@@ -53,9 +53,15 @@ def get_connection():
     return server.connection
 
 def up_receive():
+    new_conn = ""
+    current = ""
     while True:
-        print(get_connection())
-        time.sleep(5)
+        if new_conn != current:
+            current = new_conn
+            up_thread(receiving, current)
+        else:
+            new_conn = server.new_conn
+        time.sleep(2)
 
 # Main Function
 def app():

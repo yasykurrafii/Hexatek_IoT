@@ -9,6 +9,7 @@ class Server:
         
         self.connection = []
         self.communication = {}
+        self.new_conn = ""
 
     def up_server(self):
         self.socket.bind((self.host, self.port))
@@ -22,6 +23,7 @@ class Server:
                 communication, address = self.socket.accept()
                 if address[0] not in self.connection:
                     self.connection.append(address[0])
+                self.new_conn = address[0]
                 print(f'Connected {address[0]}')
                 self.communication[address[0]] = communication
             except :
