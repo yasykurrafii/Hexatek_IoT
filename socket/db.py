@@ -8,7 +8,7 @@ class Database:
         self.password = password
 
         self.connect = mysql.connect(host = host, user = user, password = password, db = "hexatek")
-        self.cursor = self.connect.cursor()
+        self.cursor = self.connect.cursor(buffered = True)
     
     def insert(self, command):
         try:
@@ -17,9 +17,15 @@ class Database:
         except :
             print("Command Salah")
 
-    def take_data(self, table, data = 'all', ip = None):
-        if ip != None:
-            self.cursor.execute(f"Select * From {table} Where ip = {ip}")
+    def take_data(self, table, data = 'all', ip = ''):
+        if ip != '':
+            command = {'192.168.25.2' :('192.168.25.2',),
+                        '192.168.25.3' : ('192.168.25.3',),
+                        '192.168.25.4' : ('192.168.25.4',),
+                        '192.168.25.5' : ('192.168.25.5',),
+                        '192.168.25.6' : ('192.168.25.6',),}
+            adr = command[ip]
+            self.cursor.execute(f"Select * From {table} Where ip = %s", adr)
         else:
             self.cursor.execute(f"SELECT * FROM {table}")
         try :
