@@ -7,6 +7,12 @@ class Database:
         self.user = user
         self.password = password
 
+        self.command = {'192.168.25.2' :('192.168.25.2',),
+                        '192.168.25.3' : ('192.168.25.3',),
+                        '192.168.25.4' : ('192.168.25.4',),
+                        '192.168.25.5' : ('192.168.25.5',),
+                        '192.168.25.6' : ('192.168.25.6',),}
+
         self.connect = mysql.connect(host = host, user = user, password = password, db = "hexatek")
         self.cursor = self.connect.cursor(buffered = True)
     
@@ -19,12 +25,7 @@ class Database:
 
     def take_data(self, table, data = 'all', ip = ''):
         if ip != '':
-            command = {'192.168.25.2' :('192.168.25.2',),
-                        '192.168.25.3' : ('192.168.25.3',),
-                        '192.168.25.4' : ('192.168.25.4',),
-                        '192.168.25.5' : ('192.168.25.5',),
-                        '192.168.25.6' : ('192.168.25.6',),}
-            adr = command[ip]
+            adr = self.command[ip]
             self.cursor.execute(f"Select * From {table} Where ip = %s", adr)
         else:
             self.cursor.execute(f"SELECT * FROM {table}")
@@ -36,6 +37,12 @@ class Database:
             self.cursor.close()
         except:
             raise "Choose data between New and All"
+
+    def take_gpio(self, ip, gpio):
+        print("Test")
+        adr = self.command[ip]
+        print(self.cursor.execute(f"SELECT * FROM rly WHERE ip = %s AND gpio = {gpio}", adr))
+        return self.cursor.fetchall()
 
 # x = Database(password = "myr170500")
 # x.take_data('dht')

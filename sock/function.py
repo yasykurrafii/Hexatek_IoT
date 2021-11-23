@@ -21,7 +21,6 @@ def command(msg):
     message = msg.split(" ")
     ip = daerah[message[3]]
     execute = f"INSERT INTO hexatek.{message[0]} {com[message[0]]} values ({message[1]}, {message[2]}, '{ip}')"
-    print(execute)
     db.insert(execute)
 
 # Function for Socket

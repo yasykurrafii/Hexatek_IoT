@@ -1,0 +1,12 @@
+mysql> CREATE USER 'rasp1'@'192.168.25.2' IDENTIFIED BY 'rasp1';
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'rasp1'@'192.168.25.2';
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.25.2';
+ERROR 1410 (42000): You are not allowed to create a user with GRANT
+mysql>
