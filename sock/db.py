@@ -39,7 +39,6 @@ class Database:
             raise "Choose data between New and All"
 
     def take_gpio(self, ip, gpio):
-        print("Test")
         adr = self.command[ip]
         print(self.cursor.execute(f"SELECT * FROM rly WHERE ip = %s AND gpio = {gpio}", adr))
         return self.cursor.fetchall()

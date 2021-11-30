@@ -6,11 +6,14 @@ import tkinter.font
 from db import Database
 from function import *
 
+from client import Client
+
 CONNECTION = []
 
-class ButtonToggle(tk.Tk, Database):
+class ButtonToggle(tk.Tk, Database, Client):
     def __init__(self, container, row, column, ip, gpio, **kwargs):
         Database.__init__(self, password = 'myr170500')
+        Client.__init__(self, ip, 9999)
         self.button = tk.Button(container, command = self.__command_on, **kwargs)
         self.button.grid(row = row, column=column, padx=2)
         self.orig_color = self.button.cget("bg")
@@ -20,6 +23,7 @@ class ButtonToggle(tk.Tk, Database):
     
     def __command_on(self):
         # send(self.ip, "testing")
+        super().send()
         self.button.configure(bg = "green", command = self.__command_off)
 
     def __command_off(self):
@@ -100,7 +104,6 @@ class Widget(tk.Tk, Database):
 
         # Label
         tk.Label(self.container, text = "Frame", font = font).grid(column=0, row=0, columnspan=4)
-        print(self.data['relay'])
         # Button
         for i in range(len(column_row)):
             column = column_row[i][0]
@@ -143,7 +146,7 @@ class Widget(tk.Tk, Database):
             counter += 1
 
     def not_connected(self):
-        tk.Label(self.container, text = "Not Connected").grid(column=0, row=0, columnspan=4)
+        tk.Label(self.container, text = f"Not Connected {self.ip}").grid(column=0, row=0, columnspan=4)
 
 
 class Tampilan(tk.Frame, Widget):
@@ -152,6 +155,8 @@ class Tampilan(tk.Frame, Widget):
     # Belom ditambahin IP
     def __init__(self, container, row, column, ip = "127.0.0.1", treeview = False, columnspan = False, span = (0,0), **kwargs):
         self.kwarg = kwargs
+        self.ip = ip
+        self.treeview = treeview
         # self.connection = up_thread(self.checking_ip)
         try:
             self.pady = kwargs['pady']
@@ -161,13 +166,14 @@ class Tampilan(tk.Frame, Widget):
         super().__init__(container, highlightthickness=2, **self.kwarg)
         # Tambahin IP untuk Widgetnya
         Widget.__init__(self, self, ip)
-        if ip not in CONNECTION and ip != "127.0.0.1":
-            super().not_connected()
-        else:
-            if treeview:
-                super().build_tree(self.tree)
-            else:
-                super().build_frame()
+        # if ip not in CONNECTION and ip != "127.0.0.1":
+        #     super().not_connected()
+        # else:
+        #     if treeview:
+        #         super().build_tree(self.tree)
+        #     else:
+        #         super().build_frame()
+        up_thread(self.up_tampilan)
         if columnspan:
             self.grid(row=row, column=column, sticky="ew", padx=40, columnspan=span[0], rowspan=span[1])
         else:
@@ -175,6 +181,24 @@ class Tampilan(tk.Frame, Widget):
                 self.grid(row=row, column=column, padx=5, pady = self.pady)
             except:
                 self.grid(row=row, column=column, padx=5)
+
+    def up_tampilan(self):
+        connection = self.checking_connection()
+        if connection == 0 or self.treeview:
+            if self.treeview:
+                super().build_tree(self.tree)
+            else:
+                super().build_frame()
+        else:
+            super().not_connected()
+
+    def checking_connection(self):
+        client = Client(host = self.ip, port = 9999)
+        res = client.check_server()
+        client.close_conn()
+        return res
+
+        
     
     # def checking_ip(self):
     #     while not self.:

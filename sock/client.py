@@ -11,10 +11,15 @@ class Client:
         self.host = host
         self.port = port
         self.bind = bind
+        self.location = (host, port)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
        
-    def connect(self):
-        self.socket.connect((self.host, self.port))
+    def connecting(self):
+        try:
+            self.socket.connect(self.location)
+            return True
+        except:
+            return False
     
     def receive(self, address):
         communication = self.communication[address]
@@ -22,9 +27,13 @@ class Client:
         message = message.split(' ')
         return message
 
+    def check_server(self):
+        result_conn = self.socket.connect_ex(self.location)
+        print(f"{self.host} result {result_conn}")
+        return result_conn
+    
+    def close_conn(self):
+        self.socket.close()
 
     def send(self, message):
         self.socket.send(message.encode('utf-8'))
-
-# x = Client("192.168.25.1", 9999)
-# x.connect()
