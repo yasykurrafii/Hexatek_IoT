@@ -1,5 +1,6 @@
 import socket
 import time
+from tkinter import Message
 
 # import sys
 # sys.path.append("..")
@@ -13,6 +14,8 @@ class Client:
         self.bind = bind
         self.location = (host, port)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        self.connection = []
        
     def connecting(self):
         try:
@@ -21,19 +24,27 @@ class Client:
         except:
             return False
     
-    def receive(self, address):
-        communication = self.communication[address]
-        message = communication.recv(2048).decoder('utf-8')
-        message = message.split(' ')
+    def receive(self):
+        message = self.socket.recv(4096).decode('utf-8')
         return message
 
     def check_server(self):
         result_conn = self.socket.connect_ex(self.location)
-        print(f"{self.host} result {result_conn}")
         return result_conn
     
     def close_conn(self):
         self.socket.close()
 
     def send(self, message):
+        print(f"Sending : {message}")
         self.socket.send(message.encode('utf-8'))
+
+    def get_connection(self):
+        self.send('ip')
+        while True:
+            message = self.receive()
+            if message == 'done':
+                print("Done")
+                break
+            ip = message.split(" ")
+            self.connection = ip

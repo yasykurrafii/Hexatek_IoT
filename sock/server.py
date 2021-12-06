@@ -1,6 +1,9 @@
 import socket
 import threading
 import time
+import os
+
+from function import up_thread
 class Server:
 
     def __init__(self, host = '127.0.0.1', port = 8000, bind = 5):
@@ -17,42 +20,60 @@ class Server:
         self.socket.bind((self.host, self.port))
         self.socket.listen(self.bind)
         print("server up")
-        self.thread = threading.Thread(target=self.check_up, args=('192.168.25.2',))
+        self.thread = threading.Thread(target=self.check_up)
         self.thread.start()
         self.connect()
        
     def connect(self):
          while True:
-            try:
-                communication, address = self.socket.accept()
-                if address[0] not in self.connection:
-                    self.connection.append(address[0])
-                self.new_conn = address[0]
-                print(f'Connected {address[0]}')
-                self.communication[address[0]] = communication
-            except :
-                pass
+            communication, address = self.socket.accept()
+            if address[0] not in self.connection:
+                self.connection.append(address[0])
+            self.new_conn = address[0]
+            print(f'Connected {address[0]}')
+            self.communication[address[0]] = communication
+            up_thread(self.receive, communication)
 
     
-    def receive(self, address):
-        communication = self.communication[address]
-        message = communication.recv(1024).decode('utf-8')
-        if len(message) == 0:
-            raise Exception("Message empty")
-        return message
+    def receive(self, communication):
+        while True:
+            message = communication.recv(4096).decode('utf-8')
+            if len(message) == 0 or message == 'done':
+                break
+            elif message == 'ip':
+                self.command(communication)
+            else:
+                message = message.split(" ")
+                communication = self.communication[message[-1]]
+                message = " ".join(message[:-1])
+                self.send(communication, message)
 
-    def send(self, address, message):
-        communication = self.communication[address]
+    def send(self, communication, message):
         communication.send(message.encode('utf-8'))
 
-    def check_up(self, address):
+    def check_up(self):
         while True:
-            time.sleep(5)
-            try:
-                self.send(address, "Test Checkup")
-                print("Connected")
-            except:
-                print("Address not connected")
+            if self.connection != []:
+                print(self.connection)
+                for ip in self.connection:
+                    respons = os.system("ping " + ip)
+                    if respons:
+                        self.connection.remove(ip)
+                        del self.communication[ip]
+                    time.sleep(5)
+                time.sleep(15)
+            else:
+                print("No one connect")
+                time.sleep(10)
+                
 
+    def command(self, communication):
+        message = " ".join(self.connection)
+        self.send(communication, message)
+        time.sleep(1.5)
+        self.send(communication, 'done')
+
+server = Server('192.168.25.1', 9999, 6)
+server.up_server()
 
 
