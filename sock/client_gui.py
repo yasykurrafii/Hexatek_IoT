@@ -48,15 +48,24 @@ class LabelSuhu(ttk.Frame):
     global db
     def __init__(self,container, ip):
         super().__init__(container)
-        self.data = db.take_data(table = 'dht', data = 'new', ip = ip)
-        print(self.data)
+        self.data = db.take_data(table = 'dht', data = 'all', ip = ip)
+        self.data_new = self.data[-1]
         self.__create_widget()
 
     def __create_widget(self):
-        ttk.Label(self, text= "Suhu").grid(row = 0, column= 0, columnspan=2, pady=0, padx=30)
-        ttk.Label(self, text= self.data[1]).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
-        ttk.Label(self, text = "Humid"). grid(row=0, columnspan=2, column=2, pady=0, padx=30)
-        ttk.Label(self, text = self.data[2]).grid(row=1, column=2, columnspan=2, pady=0, padx=30)
+        suhu = int(self.data_new[1])
+        font = ('Helvetica', 20, 'bold')
+        font_title = ('Helvetica', 20)
+        ttk.Label(self, text= "Suhu", font=font_title).grid(row = 0, column= 0, columnspan=2, pady=0, padx=30)
+        
+        if suhu < 30:
+            ttk.Label(self, text= self.data_new[1], foreground="green", font=font).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+        elif suhu <=30 and suhu <=35:
+            ttk.Label(self, text= self.data_new[1], foreground="yellow", font=font).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+        elif suhu > 35:
+            ttk.Label(self, text= self.data_new[1], foreground="red", font=font).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+        ttk.Label(self, text = "Humid", font=font_title). grid(row=0, columnspan=2, column=2, pady=0, padx=30)
+        ttk.Label(self, text = self.data_new[2], font=font).grid(row=1, column=2, columnspan=2, pady=0, padx=30)
 
 class ButtonToggle(ttk.Frame):
     global clien
