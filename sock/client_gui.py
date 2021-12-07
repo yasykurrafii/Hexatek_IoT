@@ -49,14 +49,14 @@ class LabelSuhu(ttk.Frame):
     def __init__(self,container, ip):
         super().__init__(container)
         self.data = db.take_data(table = 'dht', data = 'new', ip = ip)
+        print(self.data)
         self.__create_widget()
 
     def __create_widget(self):
-        new_data = self.data[-1]
         ttk.Label(self, text= "Suhu").grid(row = 0, column= 0, columnspan=2, pady=0, padx=30)
-        ttk.Label(self, text= new_data[1]).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+        ttk.Label(self, text= self.data[1]).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
         ttk.Label(self, text = "Humid"). grid(row=0, columnspan=2, column=2, pady=0, padx=30)
-        ttk.Label(self, text = new_data[2]).grid(row=1, column=2, columnspan=2, pady=0, padx=30)
+        ttk.Label(self, text = self.data[2]).grid(row=1, column=2, columnspan=2, pady=0, padx=30)
 
 class ButtonToggle(ttk.Frame):
     global clien
