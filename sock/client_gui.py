@@ -141,12 +141,7 @@ class App(tk.Tk):
         self.title("Rasp")
         self.resizable(False, False)
 
-        self.ip = ['192.168.25.2',
-                    '192.168.25.3',
-                    '192.168.25.4',
-                    '192.168.25.5',
-                    '192.168.25.6',
-                    '192.168.25.7']
+        self.ip = self.__listing_ip("ip.txt")
 
         self.__create_widget()
 
@@ -168,6 +163,17 @@ class App(tk.Tk):
             tampilan.grid(row=row_column[index][0], column=row_column[index][1], pady=30)
 
         tk.Button(self, text="EXIT", height=2, width=15,command=lambda:[clien.send("done") ,self.destroy()], bg='red', pady=10).grid(row=2, column=3, columnspan=2)
+
+    def __listing_ip(self, file):
+        with open(file, "r") as f:
+            list_ip = []
+            for x in f:
+                if x[-1] == "\n":
+                    x = x[:-1]
+                line = x.split(" ")
+                ip = line[-1]
+                list_ip.append(ip)
+            return list_ip
 
 app = App()
 app.mainloop()
