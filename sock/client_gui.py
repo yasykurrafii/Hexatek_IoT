@@ -121,9 +121,10 @@ class ButtonWidget(ttk.Frame):
 
 class Tampilan(tk.Frame):
 
-    def __init__(self, container, connected, ip):
+    def __init__(self, container, connected,text, ip):
         super().__init__(container, highlightbackground = 'black', width = '300', height = '300', pady = 30)
         self.ip = ip
+        self.text = text
         if connected:
             self.__create_widget()
         else:
@@ -131,7 +132,7 @@ class Tampilan(tk.Frame):
 
 
     def __create_widget(self):
-        tk.Label(self, text="Frame 1").grid(row=0, column=0)
+        tk.Label(self, text=self.text).grid(row=0, column=0)
         bt1 = ButtonWidget(self, self.ip)
         image = ImageLampu(self)
         suhu = LabelSuhu(self, self.ip)
@@ -147,10 +148,10 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.attributes('-fullscreen', True)
-        self.title("Rasp")
+        self.title("Monitoring Raspberry")
         self.resizable(False, False)
 
-        self.ip = self.__listing_ip("ip.txt")
+        self.ip, self.name = self.__listing_ip("ip.txt")
 
         self.__create_widget()
 
@@ -166,9 +167,9 @@ class App(tk.Tk):
         connection = clien.connection
         for index in range(len(row_column)):
             if self.ip[index] in connection:
-                tampilan = Tampilan(self, True, self.ip[index])
+                tampilan = Tampilan(self, True, self.name[index], self.ip[index])
             else:
-                tampilan = Tampilan(self, False, self.ip[index])
+                tampilan = Tampilan(self, False, self.name[index], self.ip[index])
             tampilan.grid(row=row_column[index][0], column=row_column[index][1], pady=30)
 
         tk.Button(self, text="EXIT", height=2, width=15,command=lambda:[clien.send("done") ,self.destroy()], bg='red', pady=10).grid(row=2, column=3, columnspan=2)
@@ -176,13 +177,16 @@ class App(tk.Tk):
     def __listing_ip(self, file):
         with open(file, "r") as f:
             list_ip = []
+            frame_text = []
             for x in f:
                 if x[-1] == "\n":
                     x = x[:-1]
                 line = x.split(" ")
                 ip = line[-1]
+                name = line[0]
                 list_ip.append(ip)
-            return list_ip
+                frame_text.append(name)
+            return list_ip, frame_text
 
 app = App()
 app.mainloop()
