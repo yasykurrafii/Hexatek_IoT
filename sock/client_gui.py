@@ -49,23 +49,37 @@ class LabelSuhu(ttk.Frame):
     def __init__(self,container, ip):
         super().__init__(container)
         self.data = db.take_data(table = 'dht', data = 'all', ip = ip)
+        self.ip = ip
         self.data_new = self.data[-1]
+        self.label = ttk.Label(self, text = '.')
+        self.label.grid(row=1, column=0, columnspan=2, pady=0, padx=30)
         self.__create_widget()
+        up_thread(self.__config)
 
     def __create_widget(self):
         suhu = int(self.data_new[1])
         font = ('Helvetica', 20, 'bold')
         font_title = ('Helvetica', 20)
         ttk.Label(self, text= "Suhu", font=font_title).grid(row = 0, column= 0, columnspan=2, pady=0, padx=30)
+        text = str(self.data_new[1])
         
         if suhu < 30:
-            ttk.Label(self, text= self.data_new[1], foreground="green", font=font).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
-        elif suhu <=30 and suhu <=35:
-            ttk.Label(self, text= self.data_new[1], foreground="yellow", font=font).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+            self.label.configure(text= text, foreground='green', font=font)
+        elif suhu >=30 and suhu <=35:
+            self.label.configure(text= text, foreground='green', font=font)
         elif suhu > 35:
-            ttk.Label(self, text= self.data_new[1], foreground="red", font=font).grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+            self.label.configure(text= text, foreground='green', font=font)
         ttk.Label(self, text = "Humid", font=font_title). grid(row=0, columnspan=2, column=2, pady=0, padx=30)
         ttk.Label(self, text = self.data_new[2], font=font).grid(row=1, column=2, columnspan=2, pady=0, padx=30)
+    
+    def __config(self):
+        while True:
+            data_suhu = db.take_data(table = 'dht', data = 'all', ip = self.ip)
+            data_new = data_suhu[-1]
+            print(data_suhu)
+            text = str(data_new[1])
+            self.label.configure(text = text)
+            time.sleep(5)
 
 class ButtonToggle(ttk.Frame):
     global clien
@@ -74,12 +88,15 @@ class ButtonToggle(ttk.Frame):
         super().__init__(container)
         self.text = text
         self.ip = ip
+
+        # If Else nentuin command
         if background == 'green':
             self.button = tk.Button(container, text = text, command=self.__command_off, bg=background, height='2', width='10')
         elif background=='red':
             self.button = tk.Button(container, text = text, command=self.__command_on, bg=background, height='2', width='10')
         self.button.grid(row=grid[0], column=grid[1])
 
+    ## Command untuk on or off
     def __command_on(self):
         clien.send(f'on {self.text} {self.ip}')
         self.button.configure(bg='green', command=self.__command_off)
@@ -161,8 +178,7 @@ class App(tk.Tk):
             [0,1],
             [0,3],
             [1,0],
-            [1,1],
-            [1,3]
+            [1,1]
         ]
         connection = clien.connection
         for index in range(len(row_column)):

@@ -1,4 +1,7 @@
 import mysql.connector as mysql
+import time
+
+from function import up_thread
 
 class Database:
 
@@ -15,8 +18,13 @@ class Database:
 
         self.connect = mysql.connect(host = host, user = user, password = password, db = "hexatek")
         self.cursor = self.connect.cursor(buffered = True)
+
+    def __restart_new(self):
+        self.connect = mysql.connect(host = self.host, user = self.user, password = self.password, db = "hexatek")
+        self.cursor = self.connect.cursor(buffered = True)
     
     def insert(self, command):
+        self.__restart_new()
         try:
             self.cursor.execute(command)
             self.connect.commit()
@@ -24,6 +32,7 @@ class Database:
             print("Command Salah")
 
     def take_data(self, table, data = 'all', ip = ''):
+        self.__restart_new()
         if ip != '':
             adr = self.command[ip]
             self.cursor.execute(f"Select * From {table} Where ip = %s", adr)
@@ -39,6 +48,7 @@ class Database:
             raise "Choose data between New and All"
 
     def take_gpio(self, ip, gpio):
+        self.__restart_new()
         adr = self.command[ip]
         print(self.cursor.execute(f"SELECT * FROM rly WHERE ip = %s AND gpio = {gpio}", adr))
         return self.cursor.fetchall()
