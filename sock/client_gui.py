@@ -1,6 +1,7 @@
 import time
 import tkinter as tk
 from tkinter import Toplevel, ttk
+from tkinter import font
 from PIL import Image, ImageTk
 
 from db import Database
@@ -51,35 +52,41 @@ class LabelSuhu(ttk.Frame):
         self.data = db.take_data(table = 'dht', data = 'all', ip = ip)
         self.ip = ip
         self.data_new = self.data[-1]
+        self.fnt = ('Helvetica', 20, 'bold')
         self.label = ttk.Label(self, text = '.')
+        self.humidity = ttk.Label(self, text = '.')
         self.label.grid(row=1, column=0, columnspan=2, pady=0, padx=30)
+        self.humidity.grid(row=1, column=2, columnspan=2, pady=0, padx=30)
         self.__create_widget()
         up_thread(self.__config)
 
     def __create_widget(self):
         suhu = int(self.data_new[1])
-        font = ('Helvetica', 20, 'bold')
         font_title = ('Helvetica', 20)
-        ttk.Label(self, text= "Suhu", font=font_title).grid(row = 0, column= 0, columnspan=2, pady=0, padx=30)
+        ttk.Label(self, text= "Temp", font=font_title).grid(row = 0, column= 0, columnspan=2, pady=0, padx=30)
         text = str(self.data_new[1])
-        
-        if suhu < 30:
-            self.label.configure(text= text, foreground='green', font=font)
-        elif suhu >=30 and suhu <=35:
-            self.label.configure(text= text, foreground='green', font=font)
-        elif suhu > 35:
-            self.label.configure(text= text, foreground='green', font=font)
+        self.__change_color(suhu, text)
         ttk.Label(self, text = "Humid", font=font_title). grid(row=0, columnspan=2, column=2, pady=0, padx=30)
-        ttk.Label(self, text = self.data_new[2], font=font).grid(row=1, column=2, columnspan=2, pady=0, padx=30)
+        self.humidity.configure(text = self.data_new[2], font=self.fnt)
     
     def __config(self):
         while True:
             data_suhu = db.take_data(table = 'dht', data = 'all', ip = self.ip)
             data_new = data_suhu[-1]
-            print(data_suhu)
+            text_humid = str(data_new[2])
+            suhu = data_new[1]
             text = str(data_new[1])
-            self.label.configure(text = text)
+            self.__change_color(suhu, text)
+            self.humidity.configure(text=text_humid)
             time.sleep(5)
+
+    def __change_color(self, suhu, text):
+        if suhu < 30:
+            self.label.configure(text= text, foreground='green', font=self.fnt)
+        elif suhu >=30 and suhu <=35:
+            self.label.configure(text= text, foreground='orange', font=self.fnt)
+        elif suhu > 35:
+            self.label.configure(text= text, foreground='red', font=self.fnt)
 
 class ButtonToggle(ttk.Frame):
     global clien
