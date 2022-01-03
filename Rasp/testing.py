@@ -1,20 +1,14 @@
-import RPi.GPIO as GPIO
+import Adafruit_DHT
 import time
+ 
+DHT_SENSOR = Adafruit_DHT.DHT11
+DHT_PIN = 4
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(13, GPIO.IN)
-GPIO.setup(19, GPIO.IN)
-GPIO.setup(6, GPIO.IN)
-GPIO.setup(26, GPIO.IN)
-GPIO.setwarnings(False)
-GPIO_CH = [6,13,19,26]
-
-while True:
-    if GPIO.input(13) == 0 or GPIO.input(19) == 0 or GPIO.input(26) == 0 or GPIO.input(6) == 0:
-        lit = [GPIO.input(x) for x in GPIO_CH]
-        print(lit)
-        print("Halo")
-        
+def Suhu() :
+    humidity, temperature = Adafruit_DHT.read(DHT_SENSOR, DHT_PIN)
+    if humidity is not None and temperature is not None:
+        return (temperature, humidity)
     else:
-        print("error")
-    time.sleep(2)
+        return ("Error", "Error")
+
+print("testing")

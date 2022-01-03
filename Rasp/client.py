@@ -19,7 +19,9 @@ class Client:
         self.socket.connect(self.binding)
 
     def receive(self):
+        self.send("Halo")
         message = self.socket.recv(4096).decode('utf-8')
+        print(message)
         return message
 
     def send(self, message):

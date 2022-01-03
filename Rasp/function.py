@@ -1,7 +1,8 @@
 import threading
 
-def up_thread(func, *args):
+def up_thread(func,name = 'Main Thread', *args):
     thread = threading.Thread(target = func, args = tuple(args))
+    thread.name = name
     thread.start()
 
 def opening_file(filename : str, method : str, message : str or list):

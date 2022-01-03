@@ -2,6 +2,8 @@ import mysql.connector as mysql
 import time
 import function
 
+from mysql.connector.locales.eng import client_error
+
 # db = mysql.connect(host = '192.168.25.1', 
 #             user = 'rasp1', 
 #             password = 'rasp1',
@@ -36,13 +38,15 @@ class Database:
         
         self.cursor = self.connect.cursor()
 
-    def __restart_new(self):
+    def stop(self):
+        self.cursor.close()
+        self.connect.close()
+
+    def _restart_new(self):
         self.connect = mysql.connect(host = self.host, user = self.user, password = self.password, db = "hexatek")
         self.cursor = self.connect.cursor(buffered = True)
 
     def insert(self,command):
-        self.__restart_new()
         self.cursor.execute(command)
         self.connect.commit()
-        self.connect.close()
                 
