@@ -4,6 +4,8 @@ create user 'rasp2'@'192.168.25.3' identified by 'rasp2';
 grant all privileges on *.*  to 'rasp2'@'192.168.25.3';
 flush privileges;
 
+CREATE SCHEMA `hexatek`;
+USE hexatek;
 
 CREATE TABLE dht(
 	id INT NOT NULL AUTO_INCREMENT,
