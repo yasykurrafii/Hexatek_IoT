@@ -24,6 +24,10 @@ class Client:
         except:
             return False
     
+    def _restart(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connecting()
+    
     def receive(self):
         message = self.socket.recv(4096).decode('utf-8')
         return message
@@ -31,12 +35,10 @@ class Client:
     def check_server(self):
         result_conn = self.socket.connect_ex(self.location)
         return result_conn
-    
-    def close_conn(self):
-        self.socket.close()
 
     def send(self, message):
         print(f"Sending : {message}")
+        self._restart()
         self.socket.send(message.encode('utf-8'))
 
     def get_connection(self):

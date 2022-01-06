@@ -38,15 +38,19 @@ class Server:
     def receive(self, communication):
         while True:
             message = communication.recv(4096).decode('utf-8')
+            print(message)
             if len(message) == 0 or message == 'done':
                 break
             elif message == 'ip':
                 self.command(communication)
             else:
                 message = message.split(" ")
-                communication = self.communication[message[-1]]
-                message = " ".join(message[:-1])
-                self.send(communication, message)
+                if message[-1] == '192.168.25.1':
+                    print(message)
+                else:
+                    communication = self.communication[message[-1]]
+                    message = " ".join(message[:-1])
+                    self.send(communication, message)
 
     def send(self, communication, message):
         communication.send(message.encode('utf-8'))
@@ -73,7 +77,7 @@ class Server:
         time.sleep(1.5)
         self.send(communication, 'done')
 
-server = Server('192.168.25.1', 9999, 6)
+server = Server(host = '192.168.25.1',port= 9999)
 server.up_server()
 
 

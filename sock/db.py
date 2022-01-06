@@ -18,6 +18,10 @@ class Database:
 
         self.connect = mysql.connect(host = host, user = user, password = password, db = "hexatek")
         self.cursor = self.connect.cursor(buffered = True)
+        
+    def stop(self):
+        self.cursor.close()
+        self.connect.close()
 
     def __restart_new(self):
         self.connect = mysql.connect(host = self.host, user = self.user, password = self.password, db = "hexatek")
@@ -28,30 +32,46 @@ class Database:
         try:
             self.cursor.execute(command)
             self.connect.commit()
+            self.stop()
         except :
             print("Command Salah")
+    
+    def commands(self, command):
+        self.cursor.execute(command)
+        res = self.cursor.fetchall()
+        print(res)
+        self.stop()
+        return res
 
     def take_data(self, table, data = 'all', ip = ''):
         self.__restart_new()
         if ip != '':
             adr = self.command[ip]
-            self.cursor.execute(f"Select * From {table} Where ip = %s", adr)
+            self.cursor.execute(f"Select * From {table} Where ip = '{ip}'")
         else:
             self.cursor.execute(f"SELECT * FROM {table}")
         try :
+            res = ""
             if data == 'all':
-                return self.cursor.fetchall()
+                res = self.cursor.fetchall()
             elif data == 'new':
-                return self.cursor.fetchone()
-            self.cursor.close()
+                res = self.cursor.fetchone()
+            self.stop()
+            return res
         except:
             raise "Choose data between New and All"
 
-    def take_gpio(self, ip, gpio):
+    def take_newest(self, tabel : str, res: list, ip:str, grouping : list = None):
         self.__restart_new()
-        adr = self.command[ip]
-        print(self.cursor.execute(f"SELECT * FROM rly WHERE ip = %s AND gpio = {gpio}", adr))
-        return self.cursor.fetchall()
+        res = ','.join(res)
+        group = ','.join(grouping)
+        comm = f"SELECT {res} FROM {tabel} WHERE id IN (SELECT max(id) FROM {tabel} GROUP BY {group}) and ip = '{ip}';"
+        self.cursor.execute(comm)
+        res = self.cursor.fetchall()
+        self.stop()
+        time.sleep(1.5)
+        return res
+
 
 # x = Database(password = "myr170500")
 # x.take_data('dht')
