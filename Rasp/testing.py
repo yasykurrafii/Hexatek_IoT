@@ -10,3 +10,5 @@ def Suhu() :
         return (temperature, humidity)
     else:
         return ("Error", "Error")
+
+print("testing")

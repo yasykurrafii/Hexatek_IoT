@@ -1,4 +1,23 @@
 import mysql.connector as mysql
+import time
+import function
+
+from mysql.connector.locales.eng import client_error
+
+# db = mysql.connect(host = '192.168.25.1', 
+#             user = 'rasp1', 
+#             password = 'rasp1',
+#             db = 'hexatek')
+
+# cursor = db.cursor()
+# print(cursor)
+# cursor.execute("""
+# INSERT INTO dht(suhu, humidity, ip)
+# VALUES (18, 1, '192.168.25.2')
+# """)
+
+# db.commit()
+# print(cursor)
 
 class Database:
 
@@ -7,15 +26,27 @@ class Database:
         self.user = user
         self.password = password
 
+        # Yasykur
         self.connect = mysql.connect(
             host = host, user = user, password = password, db = 'hexatek'
         )
 
+        # Tera
+        # self.connect = mysql.connect(
+        #     host = host, user = user, password = password, db = 'hexatek', port=3360
+        # )
+        
         self.cursor = self.connect.cursor()
 
-    def insert(self, command):
-        try:
-            self.cursor.execute(command)
-            self.connect.commit()
-        except:
-            print('Command Salah')
+    def stop(self):
+        self.cursor.close()
+        self.connect.close()
+
+    def _restart_new(self):
+        self.connect = mysql.connect(host = self.host, user = self.user, password = self.password, db = "hexatek")
+        self.cursor = self.connect.cursor(buffered = True)
+
+    def insert(self,command):
+        self.cursor.execute(command)
+        self.connect.commit()
+                

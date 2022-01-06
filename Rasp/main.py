@@ -1,59 +1,59 @@
 import time
-import RPI.GPIO as GPIO
+import RPi.GPIO as GPIO
+
+from client import Client
 import dht_config
-
-from server import Server
 from db import Database
-from function import up_thread
+from function import up_thread, opening_file
+import threading
 
-class Main(Server, Database):
+class Main(Database):
 
-    def __init__(self, host='127.0.0.1', port=8000, bind=5):
-        super().__init__(host=host, port=port, bind=bind)
-        Database.__init__(self, '192.168.25.1', 'rasp1', 'rasp1')
-        self.gpio_ch = [14, 15, 18, 23, 24, 25, 8, 7]
+    def __init__(self, host='127.0.0.1'):
+        Database.__init__(self, host, 'rasp2', 'rasp2')
+        self.gpio_ch = {'lampu' : [14,15,18,23,24,25,8,7],
+                        'saklar' :  [6,13,19,26]}
+        self.mode = []
+        self.stop_thread = False
         self.setup()
-        self.mode = [GPIO.input(n) for n in self.gpio_ch]
-        self.host = host
-
+    
     def setup(self):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setwarning(False)
-        GPIO.setup(self.gpio_ch, GPIO.OUT)
-        time.sleep(5)
-        up_thread(self.inserting_mode)
-        up_thread(self.inserting_dht)
+        GPIO.setwarnings(False)
+        GPIO.setup(self.gpio_ch['lampu'], GPIO.OUT)
+        GPIO.setup(self.gpio_ch['saklar'], GPIO.IN)
+        self.mode = [GPIO.input(x) for x in self.gpio_ch['lampu']]
+        self.inserting_mode('lampu', 'rly')
+        self.inserting_mode('saklar', 'skl')
+        self.inserting_dht()
+        Database.stop(self)
 
-    def command(self):
-        while True:
-            message = super().receive(super().address)
-            message = message.split(" ")
-            if message[0] == 'on':
-                GPIO.output(int(message[1]), GPIO.HIGH)
-            elif message[0] == 'off':
-                GPIO.output(int(message[1]), GPIO.LOW)
-            else:
-                super().send(super().address, "Command salah")
+    def reading_condition(self, gpio : list):
+        mode = [GPIO.input(n) for n in gpio]
+        return mode
 
-    def inserting_mode(self):
-        while True:
-            self.mode = [GPIO.input(n) for n in self.gpio_ch]
-            for ind in range(len(self.mode)):
-                gpio = self.gpio_ch[ind]
-                mode = self.mode[ind]
-                command = f"INSERT INTO rly(gpio, kondisi, ip) VALUES ({gpio}, {mode}, {self.host})"
-                super().insert(command)
-            time.sleep(30)
+    def inserting_mode(self, checking : str, tabel : str):
+        modes = self.reading_condition(self.gpio_ch[checking])
+        print(modes)
+        msg_modes = [str(n) for n in modes]
+        message = ','.join(msg_modes)
+        
+        for ind in range(len(modes)):
+            gpio = self.gpio_ch[checking][ind]
+            mode = modes[ind]
+            command = f'INSERT INTO {tabel}(gpio, kondisi, ip) VALUES ({gpio}, {mode}, "192.168.25.3")'
+            super().insert(command)       
+        if checking == 'lampu':
+            opening_file("last_condition.txt", 'w', message)
+            
 
     def inserting_dht(self):
-        while True:
-            dht = dht_config.suhu()
-            if "Error" in dht:
-                print("Error dht")
-                time.sleep(5)
-                continue
-            command = f"INSERT INTO dht(suhu, humnidity, ip) VALUES ({dht[0]}, {dht[1]}, {self.host})"
-            super().insert(command)
-            time.sleep(30)
+        dht = dht_config.Suhu()
+        if "Error" in dht:
+            print("Error dht")
+            return
+        command = f'INSERT INTO dht(suhu, humidity, ip) VALUES ({dht[0]}, {dht[1]}, "192.168.25.3")'
+        super().insert(command)
 
-test = Main(host = "192.168.25.3", port= 9999)
+
+test = Main(host = "192.168.25.1")
